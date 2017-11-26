@@ -8,6 +8,7 @@ df <- readRDS(file="input/train.rds")
 #df$inc_angle <- as.numeric(df$inc_angle)
 #df$inc_angle[is.na(df$inc_angle)] <- 0
 
+# Feature scaling
 normalize <- function(x) (x/sqrt(sum(x^2)))
 
 band1 <- sapply(df[,2], function(x) unlist(x))
@@ -75,7 +76,6 @@ model %>%
     layer_activity_regularization(l1=0.0,l2=l2_lambda) %>%
     layer_activation('relu') %>%
    
-    
     layer_conv_2d(filters = conv_depth, kernel_size = c(kernel_size,kernel_size),
                   kernel_initializer='he_uniform') %>%
     layer_activity_regularization(l1=0.0,l2=l2_lambda) %>%
@@ -93,8 +93,7 @@ model %>%
     layer_activity_regularization(l1=0.0,l2=l2_lambda) %>%
     layer_activation('softmax')
 
-
 model %>% compile(optimizer = optimizer_rmsprop(), loss = 'categorical_crossentropy',metrics = c('accuracy'))
 
-history <- model %>% fit(x = X, y = y, bach_size = batch_size, epochs = epochs, validation_split = .1)
+history <- model %>% fit(x = X, y = y, bach_size = batch_size, epochs = epochs, validation_split = .2)
 history
